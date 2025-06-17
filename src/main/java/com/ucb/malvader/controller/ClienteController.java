@@ -26,7 +26,7 @@ public class ClienteController {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("usuarioLogado") == null) {
-            response.sendRedirect("/Login.html");
+            response.sendRedirect("/Login.html?erro=login_necessario&pagina=clientes_cadastrar");
             return;
         }
 
