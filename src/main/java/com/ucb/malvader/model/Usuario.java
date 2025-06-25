@@ -28,7 +28,7 @@ public class Usuario implements Autenticavel {
     @Column(nullable = false)
     private TipoUsuario tipo_usuario;
 
-    @Column(length = 32, nullable = false)
+    @Column(length = 100, nullable = false)
     private String senhaHash;
 
     private String otp_ativo;
