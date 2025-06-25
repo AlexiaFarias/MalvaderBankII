@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+
 
 import java.io.IOException;
-import java.util.List;
+
 
 @Controller
 public class ClienteController {
@@ -22,34 +22,51 @@ public class ClienteController {
     private ClienteRepository clienteRepository;
 
     @PostMapping("/clientes/cadastrar")
-    public void cadastrarCliente(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession(false);
+    public void cadastrarCliente(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute("usuarioLogado") == null) {
-            response.sendRedirect("/Login.html?erro=login_necessario&pagina=clientes_cadastrar");
-            return;
+            if (session == null || session.getAttribute("usuarioLogado") == null) {
+                response.sendRedirect("/Login.html?erro=login_necessario&pagina=clientes_cadastrar");
+                return;
+            }
+
+            Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
+
+            if (usuarioLogado.getTipo_usuario() != Usuario.TipoUsuario.CLIENTE) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Apenas clientes podem acessar esta página");
+                return;
+            }
+
+
+            Cliente cliente = new Cliente();
+            cliente.setId_usuario(usuarioLogado.getId_usuario());
+            cliente.setNome(usuarioLogado.getNome());
+            cliente.setCpf(usuarioLogado.getCpf());
+            cliente.setData_nascimento(usuarioLogado.getData_nascimento());
+            cliente.setTelefone(usuarioLogado.getTelefone());
+            cliente.setTipo_usuario(usuarioLogado.getTipo_usuario());
+            cliente.setSenhaHash(usuarioLogado.getSenhaHash());
+            cliente.setOtp_ativo(usuarioLogado.getOtp_ativo());
+            cliente.setOtp_expiracao(usuarioLogado.getOtp_expiracao());
+            cliente.setScore_credito(700);
+
+            clienteRepository.save(cliente);
+            response.sendRedirect("/MenuCliente.html");
+        } catch (IOException e) {
+            e.printStackTrace(); // Log the exception
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao cadastrar cliente: " + e.getMessage());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
-
-        Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
-
-        if (usuario.getTipo_usuario() != Usuario.TipoUsuario.CLIENTE) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Apenas clientes podem acessar esta página");
-            return;
-        }
-
-        Cliente cliente = new Cliente();
-        cliente.setUsuario(usuario);
-        cliente.setScore_credito(700);
-
-        clienteRepository.save(cliente);
-        response.sendRedirect("/MenuCliente.html");
     }
 
-    @GetMapping("/clientes")
-    @ResponseBody
-    public List<Cliente> listarClientes() {
-        return clienteRepository.findAll();
-    }
+    @GetMapping("/usuario/cadastro")
+public String mostrarFormularioCadastro() {
+    return "CadastroUsuario.html"; 
+}
 }
 
 

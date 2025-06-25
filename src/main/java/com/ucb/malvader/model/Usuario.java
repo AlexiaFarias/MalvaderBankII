@@ -5,7 +5,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "Usuario")
-public class Usuario {
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Usuario implements Autenticavel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -111,4 +112,5 @@ public class Usuario {
         this.otp_expiracao = otp_expiracao;
     }
 }
+
 

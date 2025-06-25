@@ -15,12 +15,11 @@ body {
   min-height: 100vh;
   padding: 3rem 1rem;
   color: #ffffff;
-   height: 100vh;
+  height: 100vh;
   margin: 0;
-  display: flex;
   justify-content: center;
-  align-items: center;
 }
+
 .container {
   display: flex;
   flex-direction: column;
@@ -41,7 +40,12 @@ h1 {
   margin-bottom: 2rem;
   text-align: center;
 }
-
+.form-cadastro label,
+.form-cadastro input,
+.form-cadastro select {
+  display: block;
+  margin-bottom: 6px; 
+}
 
 form {
   background-color: #054d74;
@@ -53,6 +57,7 @@ form {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  align-items: center; 
 }
 
 form h2 {
@@ -62,41 +67,50 @@ form h2 {
   margin-bottom: 20px;
 }
 
+
 input[type="text"],
 input[type="password"],
 input[type="number"],
 input[type="date"],
-select {
+select,
+button.botao-tamanho-fixo {
+  width: 310px;
   padding: 10px;
   border: 1px solid #ffffff50;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 16px;
   background-color: #ffffff;
   color: #000000;
+  box-sizing: border-box;
+  display: block;
+  margin: 0 auto 15px auto; 
 }
 
 input[type="submit"],
-button {
+button.botao-tamanho-fixo {
   background-color: #031e3a;
   color: #ffffff;
   border: none;
-  padding: 12px;
-  border-radius: 5px;
-  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
+ 
 }
 
 input[type="submit"]:hover,
-button:hover {
+button.botao-tamanho-fixo:hover {
   background-color: #34577a;
+}
+
+.botao-tamanho-fixo {
+  
+  height: 40px;
+  margin: 10px 0; 
 }
 
 .espacado {
   margin: 10px 0;
 }
-
 
 table {
   width: 100%;
@@ -124,7 +138,6 @@ tr:hover {
   background-color: #0e51ae;
 }
 
-
 @media (max-width: 480px) {
   form {
     padding: 20px;
@@ -132,5 +145,12 @@ tr:hover {
 
   h1 {
     font-size: 2rem;
+  }
+  
+  input[type="text"],
+  input[type="password"],
+  select,
+  button.botao-tamanho-fixo {
+    width: 100%; 
   }
 }

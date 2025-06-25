@@ -1,14 +1,18 @@
 package com.ucb.malvader.controller;
 
 import com.ucb.malvader.model.Usuario;
+import com.ucb.malvader.model.Funcionario;
+import com.ucb.malvader.model.Cargo;
 import com.ucb.malvader.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
@@ -26,10 +30,37 @@ public class UsuarioController {
             return;
         }
 
-        Usuario usuario = new Usuario();
+        String cpf = request.getParameter("cpf");
+
+        if (usuarioRepository.findByCpf(cpf).isPresent()) {
+            response.sendRedirect("/CadastroUsuario.html?erro=cpfExistente");
+            return;
+        }
+
+        String tipo = request.getParameter("tipo_usuario");
+        String senha = request.getParameter("senha");
+
+        if (senha == null || senha.isEmpty()) {
+            response.sendRedirect("/CadastroUsuario.html?erro=senhaVazia");
+            return;
+        }
+
+        String senhaCriptografada = BCrypt.hashpw(senha, BCrypt.gensalt());
+
+        Usuario usuario;
+
+        if ("FUNCIONARIO".equals(tipo)) {
+            Funcionario funcionario = new Funcionario();
+            funcionario.setCodigoFuncionario(request.getParameter("codigo_funcionario"));
+            funcionario.setCargo(Cargo.valueOf(request.getParameter("cargo")));
+            funcionario.setCodigoEmpresa(request.getParameter("codigo_empresa")); // cuidado: esse campo não está no HTML atual
+            usuario = funcionario;
+        } else {
+            usuario = new Usuario();
+        }
 
         usuario.setNome(request.getParameter("nome"));
-        usuario.setCpf(request.getParameter("cpf"));
+        usuario.setCpf(cpf);
 
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -39,23 +70,11 @@ public class UsuarioController {
         }
 
         usuario.setTelefone(request.getParameter("telefone"));
-        usuario.setTipo_usuario(Usuario.TipoUsuario.valueOf(request.getParameter("tipo_usuario")));
-        usuario.setSenhaHash(request.getParameter("senhaHash"));
+        usuario.setTipo_usuario(Usuario.TipoUsuario.valueOf(tipo));
+        usuario.setSenhaHash(senhaCriptografada);
 
         usuarioRepository.save(usuario);
 
-        session = request.getSession();
-        session.setAttribute("usuarioLogado", usuario);
-
-        if (usuario.getTipo_usuario() == Usuario.TipoUsuario.CLIENTE) {
-            response.sendRedirect("/MenuCliente.html");
-        } else if (usuario.getTipo_usuario() == Usuario.TipoUsuario.FUNCIONARIO) {
-            response.sendRedirect("/MenuFuncionario.html");
-        } else {
-            response.sendRedirect("/Login.html?erro=tipoDesconhecido");
-        }
+        response.sendRedirect(tipo.equals("FUNCIONARIO") ? "/MenuFuncionario.html" : "/MenuCliente.html");
     }
 }
-
-
-

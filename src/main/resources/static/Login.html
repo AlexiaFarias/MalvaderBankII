@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-     <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css">
   <meta charset="UTF-8">
-  <img src="Malvaderbank.png" alt="Malvaderbank" width="95" height="200" style="vertical-align: middle; margin-right: 10px;">
   <title>Login - Malvader Bank</title>
+  <img src="Malvaderbank.png" alt="Malvaderbank" width="95" height="200" style="vertical-align: middle; margin-right: 10px;">
 </head>
 <body>
-  <body>
   <div class="container">
     <h1>Bem-vindo ao Malvader Bank</h1>
     <form method="post" action="/login">
       <div>
         <label for="cpf">CPF:</label><br>
-        <input type="text" name="cpf" required>
+        <input type="text" name="cpf" class="botao-tamanho-fixo" required>
       </div>
       <div>
         <label for="senhaHash">Senha:</label><br>
-        <input type="password" name="senhaHash" required>
+        <input type="password" name="senhaHash" class="botao-tamanho-fixo" required>
       </div>
-      <button type="submit">Entrar</button>
-      <a href="/cadastroUsuario.html" class="cadastro-link">Ainda não tem conta? Cadastre-se aqui</a>
+      <button type="submit" class="botao-tamanho-fixo">Entrar</button>
     </form>
   </div>
-</body
 </body>
 </html>
